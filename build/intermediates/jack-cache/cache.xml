@@ -2,6 +2,36 @@
 <items version="2" >
 
     <item
+        jar="/home/piter/.android/build-cache/341625b5d753053276cf9b157acc08b27a537f31/output/jars/classes.jar"
+        revision="25.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-37b82ea146cded28cb40eb5cc3523badb8a8b14c.jar" />
+    </item>
+    <item
+        jar="/home/piter/.android/build-cache/292abbcc7f5ce05860b07898868b700fc37b5c12/output/jars/classes.jar"
+        revision="25.0.2"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-abc239c59ca3e96b645fa51cabdb9041a5e20fae.jar" />
+    </item>
+    <item
+        jar="/home/piter/.android/build-cache/1911a1cc169092eb2c2f128a3e1e6d4f7e994369/output/jars/classes.jar"
+        revision="25.0.2"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-fe16e060f54948dfc0dbe6aeb55394b89f1914e8.jar" />
+    </item>
+    <item
+        jar="/home/piter/Android/Sdk/platforms/android-25/optional/org.apache.http.legacy.jar"
+        revision="25.0.2"
+        sha1="5f0541a4298daa0590b22cfbde43f85e2a675545">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackRuntimeLibraries/debug/jars/8000/40/org.apache.http.legacy-d50beb106db34f0b9c5fa53a9a8cdd34accd3491.jar" />
+    </item>
+    <item
+        jar="/home/piter/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        revision="25.0.2"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/support-annotations-25.3.1-364c35ba1b7312526000a8ec1cfcc6f9a9aa194e.jar" />
+    </item>
+    <item
         jar="/home/piter/.android/build-cache/96a1baa535c4e3480cb478f4157206df41b3a222/output/jars/classes.jar"
         revision="25.0.2"
         sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
@@ -14,22 +44,10 @@
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-5e91e7ec475df05684bbb6d81b4fc38689738713.jar" />
     </item>
     <item
-        jar="/home/piter/.android/build-cache/341625b5d753053276cf9b157acc08b27a537f31/output/jars/classes.jar"
-        revision="25.0.2"
-        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-37b82ea146cded28cb40eb5cc3523badb8a8b14c.jar" />
-    </item>
-    <item
         jar="/home/piter/.android/build-cache/e52d932ec3aecd91b64ab0c9b1d345044605defe/output/jars/classes.jar"
         revision="25.0.2"
         sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-302c4e3292085a5bd80b918670b6ae564014b01e.jar" />
-    </item>
-    <item
-        jar="/home/piter/.android/build-cache/292abbcc7f5ce05860b07898868b700fc37b5c12/output/jars/classes.jar"
-        revision="25.0.2"
-        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-abc239c59ca3e96b645fa51cabdb9041a5e20fae.jar" />
     </item>
     <item
         jar="/home/piter/.android/build-cache/967cccecffc274fc3c5c787e7db7b99cee0cffc6/output/jars/classes.jar"
@@ -44,12 +62,6 @@
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-93c08e93fa360dd81f8eb5c3f50be0bd2d90f793.jar" />
     </item>
     <item
-        jar="/home/piter/.android/build-cache/1911a1cc169092eb2c2f128a3e1e6d4f7e994369/output/jars/classes.jar"
-        revision="25.0.2"
-        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-fe16e060f54948dfc0dbe6aeb55394b89f1914e8.jar" />
-    </item>
-    <item
         jar="/home/piter/.android/build-cache/d95b4db5e23515c31e5577b05b86834dbb4d7aad/output/jars/classes.jar"
         revision="25.0.2"
         sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
@@ -62,10 +74,10 @@
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-230df988d82dcb09c4a8c5b7fa42aeabc262efec.jar" />
     </item>
     <item
-        jar="/home/piter/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jar="/home/piter/Android/Sdk/platforms/android-25/android.jar"
         revision="25.0.2"
-        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/support-annotations-25.3.1-364c35ba1b7312526000a8ec1cfcc6f9a9aa194e.jar" />
+        sha1="712a0312fe844a21a1b3812fa960c363a1578984">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackRuntimeLibraries/debug/jars/8000/40/android-449c1746469f926b5589dfa2a251a58f5611bb07.jar" />
     </item>
     <item
         jar="/home/piter/Android/Sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"

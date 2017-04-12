@@ -1,32 +1,45 @@
 package cba.piterpti.pl.remoteplayerclient.fragment;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 import cba.piterpti.pl.remoteplayerclient.R;
+import cba.piterpti.pl.remoteplayerclient.activity.MainActivity;
 import cba.piterpti.pl.remoteplayerclient.communication.Client;
 
 import static android.app.Activity.RESULT_OK;
 
 public class PlayerFragment extends Fragment {
 
-    private Button getFilesBtn;
-    private Button sendBtn;
     private TextView urlTextView;
     private static final int ACTIVITY_CHOOSE_FILE = 3;
+    public static final String IP_ADDRESS = "IP_ADDRESS";
+    public static final String PORT = "PORT";
 
     private Client client;
     private ProgressDialog pd;
+
+    private Object exceptionLock = new Object();
+
+    private String filePath;
 
     public PlayerFragment() {
 
@@ -35,6 +48,11 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
+        ErrorListener listener = new ErrorListener(getActivity());
+        Thread t = new Thread(listener);
+        t.setDaemon(true);
+        t.start();
+        client = new Client(exceptionLock);
         init(view);
 
         String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
@@ -42,7 +60,6 @@ public class PlayerFragment extends Fragment {
         int permsRequestCode = 200;
 
         requestPermissions(perms, permsRequestCode);
-        client = new Client();
 
         return view;
     }
@@ -51,14 +68,13 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
-
-
     private void init(View view) {
-        getFilesBtn = (Button) view.findViewById(R.id.main_getFileBtn);
-        sendBtn = (Button) view.findViewById(R.id.main_send);
+        getConfig();
+
+        Button getFilesBtn = (Button) view.findViewById(R.id.main_getFileBtn);
+        Button sendBtn = (Button) view.findViewById(R.id.main_send);
         urlTextView = (TextView) view.findViewById(R.id.main_url);
 
         Button pauseBtn = (Button) view.findViewById(R.id.main_pause);
@@ -66,6 +82,7 @@ public class PlayerFragment extends Fragment {
         Button playBtn = (Button) view.findViewById(R.id.main_play);
         Button nextBtn = (Button) view.findViewById(R.id.main_next);
         Button prevBtn = (Button) view.findViewById(R.id.main_prev);
+        Button configBtn = (Button) view.findViewById(R.id.main_config);
 
         getFilesBtn.setOnClickListener(v -> {
             Intent chooseFile;
@@ -77,31 +94,29 @@ public class PlayerFragment extends Fragment {
         });
 
         sendBtn.setOnClickListener(v -> {
-            pd = ProgressDialog.show(getActivity(), "Processing", "Sending mp3 file to your PC", true, false);
-            client.setDialog(pd);
-            client.sendFile(urlTextView.getText() + "");
-            load();
+            String path = urlTextView.getText() + "";
+            if (path != null && !path.isEmpty() && new File(path).exists()) {
+                pd = ProgressDialog.show(getActivity(), "Processing", "Sending mp3 file to your PC", true, false);
+                client.setDialog(pd);
+
+                client.sendFile(urlTextView.getText() + "");
+            } else {
+                urlTextView.setText("Choose file first");
+                urlTextView.setTextColor(Color.RED);
+            }
         });
 
-        playBtn.setOnClickListener(v -> {
-            client.sendMessage(Client.MSG_PLAY);
-        });
+        playBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PLAY));
 
-        stopBtn.setOnClickListener(v -> {
-            client.sendMessage(Client.MSG_STOP);
-        });
+        stopBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_STOP));
 
-        pauseBtn.setOnClickListener(v -> {
-            client.sendMessage(Client.MSG_PAUSE);
-        });
+        pauseBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PAUSE));
 
-        nextBtn.setOnClickListener(v -> {
-            client.sendMessage(Client.MSG_NEXT);
-        });
+        nextBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_NEXT));
 
-        prevBtn.setOnClickListener(v -> {
-            client.sendMessage(Client.MSG_PREV);
-        });
+        prevBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PREV));
+
+        configBtn.setOnClickListener(v -> goToConfiguration());
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -110,21 +125,58 @@ public class PlayerFragment extends Fragment {
         }
         if(requestCode == ACTIVITY_CHOOSE_FILE) {
             Uri uri = data.getData();
-            String filePath = getRealPathFromURI(uri);
+            filePath = getRealPathFromURI(uri);
             urlTextView.setText(filePath);
+            urlTextView.setTextColor(Color.WHITE);
         }
     }
 
     public String getRealPathFromURI(Uri contentUri) {
-        String [] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getActivity().getContentResolver().query( contentUri, proj, null, null,null);
+        String [] project = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().getContentResolver().query( contentUri, project, null, null,null);
         if (cursor == null) return null;
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
 
-    private void load() {
+    private void goToConfiguration() {
+        ConfigurationFragment configFragment = new ConfigurationFragment();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, configFragment, MainActivity.CONFIG_FRAGMENT);
+        transaction.commit();
+    }
 
+    private void getConfig() {
+        SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+        String ipAddress = settings.getString(IP_ADDRESS, "192.168.0.1");
+        String port = settings.getString(PORT, "8888");
+        System.out.println("Client config: port: " + port + ", host: " + ipAddress);
+        client.setServerHost(ipAddress);
+        client.setSocketServerPORT(Integer.valueOf(port));
+    }
+
+    class ErrorListener implements Runnable {
+
+        private Activity activity;
+
+        public ErrorListener(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                synchronized (exceptionLock){
+                    try {
+                        exceptionLock.wait();
+                        activity.runOnUiThread(() -> Toast.makeText(activity,
+                                "Problem with communication", Toast.LENGTH_SHORT).show());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

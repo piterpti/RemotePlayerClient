@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cba.piterpti.pl.remoteplayerclient.fragment.ConfigurationFragment"
+    android:orientation="vertical"
+    android:background="#111"
+    android:padding="10dp">
+
+    <TextView
+        android:text="Port:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#eee"
+        android:textSize="24sp"/>
+    
+    <EditText
+        android:id="@+id/config_portText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ddd"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:text="IP address:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#eee"
+        android:layout_marginTop="10dp"
+        android:textSize="24sp"/>
+
+    <EditText
+        android:id="@+id/config_ipText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ddd"
+        android:textSize="24sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="15dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/config_back"
+            android:text="@string/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/config_save"
+            android:text="@string/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>
