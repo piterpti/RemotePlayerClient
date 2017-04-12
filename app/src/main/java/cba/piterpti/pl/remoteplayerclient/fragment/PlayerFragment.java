@@ -1,17 +1,24 @@
-package cba.piterpti.pl.remoteplayerclient;
+package cba.piterpti.pl.remoteplayerclient.fragment;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import cba.piterpti.pl.remoteplayerclient.R;
+import cba.piterpti.pl.remoteplayerclient.communication.Client;
 
-public class MainActivity extends Activity {
+import static android.app.Activity.RESULT_OK;
+
+public class PlayerFragment extends Fragment {
 
     private Button getFilesBtn;
     private Button sendBtn;
@@ -21,11 +28,14 @@ public class MainActivity extends Activity {
     private Client client;
     private ProgressDialog pd;
 
+    public PlayerFragment() {
+
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_player, container, false);
+        init(view);
 
         String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
 
@@ -33,18 +43,29 @@ public class MainActivity extends Activity {
 
         requestPermissions(perms, permsRequestCode);
         client = new Client();
+
+        return view;
     }
 
-    private void init() {
-        getFilesBtn = (Button) findViewById(R.id.main_getFileBtn);
-        sendBtn = (Button) findViewById(R.id.main_send);
-        urlTextView = (TextView) findViewById(R.id.main_url);
 
-        Button pauseBtn = (Button) findViewById(R.id.main_pause);
-        Button stopBtn = (Button) findViewById(R.id.main_stop);
-        Button playBtn = (Button) findViewById(R.id.main_play);
-        Button nextBtn = (Button) findViewById(R.id.main_next);
-        Button prevBtn = (Button) findViewById(R.id.main_prev);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+
+
+    private void init(View view) {
+        getFilesBtn = (Button) view.findViewById(R.id.main_getFileBtn);
+        sendBtn = (Button) view.findViewById(R.id.main_send);
+        urlTextView = (TextView) view.findViewById(R.id.main_url);
+
+        Button pauseBtn = (Button) view.findViewById(R.id.main_pause);
+        Button stopBtn = (Button) view.findViewById(R.id.main_stop);
+        Button playBtn = (Button) view.findViewById(R.id.main_play);
+        Button nextBtn = (Button) view.findViewById(R.id.main_next);
+        Button prevBtn = (Button) view.findViewById(R.id.main_prev);
 
         getFilesBtn.setOnClickListener(v -> {
             Intent chooseFile;
@@ -56,7 +77,7 @@ public class MainActivity extends Activity {
         });
 
         sendBtn.setOnClickListener(v -> {
-            pd = ProgressDialog.show(this, "Processing", "Sending mp3 file to your PC", true, false);
+            pd = ProgressDialog.show(getActivity(), "Processing", "Sending mp3 file to your PC", true, false);
             client.setDialog(pd);
             client.sendFile(urlTextView.getText() + "");
             load();
@@ -83,7 +104,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
@@ -96,7 +117,7 @@ public class MainActivity extends Activity {
 
     public String getRealPathFromURI(Uri contentUri) {
         String [] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query( contentUri, proj, null, null,null);
+        Cursor cursor = getActivity().getContentResolver().query( contentUri, proj, null, null,null);
         if (cursor == null) return null;
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();

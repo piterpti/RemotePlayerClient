@@ -1,4 +1,4 @@
-package cba.piterpti.pl.remoteplayerclient;
+package cba.piterpti.pl.remoteplayerclient.communication;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -18,7 +18,7 @@ import java.net.Socket;
 public class Client {
 
     private static final int SocketServerPORT = 8888;
-    private static final String ServerHost = "192.168.1.102";
+    private static final String ServerHost = "192.168.0.103";
 
     private boolean processing = true;
 
