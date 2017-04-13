@@ -24,6 +24,7 @@ import java.io.File;
 import cba.piterpti.pl.remoteplayerclient.R;
 import cba.piterpti.pl.remoteplayerclient.activity.MainActivity;
 import cba.piterpti.pl.remoteplayerclient.communication.Client;
+import pl.piterpti.message.Messages;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -37,7 +38,7 @@ public class PlayerFragment extends Fragment {
     private Client client;
     private ProgressDialog pd;
 
-    private Object exceptionLock = new Object();
+    private Object exceptionLock;
 
     private String filePath;
 
@@ -49,18 +50,22 @@ public class PlayerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ErrorListener listener = new ErrorListener(getActivity());
+
+        client = ((MainActivity)getActivity()).getClient();
+        exceptionLock = client.getLock();
+        init(view);
+
         Thread t = new Thread(listener);
         t.setDaemon(true);
         t.start();
-        client = new Client(exceptionLock);
-        init(view);
 
         String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
 
         int permsRequestCode = 200;
 
-        requestPermissions(perms, permsRequestCode);
 
+
+        requestPermissions(perms, permsRequestCode);
         return view;
     }
 
@@ -84,6 +89,7 @@ public class PlayerFragment extends Fragment {
         Button prevBtn = (Button) view.findViewById(R.id.main_prev);
         Button configBtn = (Button) view.findViewById(R.id.main_config);
 
+
         getFilesBtn.setOnClickListener(v -> {
             Intent chooseFile;
             Intent intent;
@@ -106,15 +112,15 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-        playBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PLAY));
+        playBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_PLAY));
 
-        stopBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_STOP));
+        stopBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_STOP));
 
-        pauseBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PAUSE));
+        pauseBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_PAUSE));
 
-        nextBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_NEXT));
+        nextBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_NEXT));
 
-        prevBtn.setOnClickListener(v -> client.sendMessage(Client.MSG_PREV));
+        prevBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_PREV));
 
         configBtn.setOnClickListener(v -> goToConfiguration());
     }

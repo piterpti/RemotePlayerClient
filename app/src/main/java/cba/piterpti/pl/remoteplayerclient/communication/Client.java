@@ -1,9 +1,7 @@
 package cba.piterpti.pl.remoteplayerclient.communication;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -13,25 +11,21 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import pl.piterpti.message.Message;
+import pl.piterpti.message.MessagePlayerControl;
+import pl.piterpti.message.MessageSendFile;
+import pl.piterpti.message.MessageType;
+import pl.piterpti.message.Messages;
+
 public class Client {
 
     private int SocketServerPORT = 8888;
     private String ServerHost = "192.168.0.1";
 
-    private static final String MSG = "MSG:";
-    public static final String MSG_PLAY = "PLAY";
-    public static final String MSG_PAUSE = "PAUSE";
-    public static final String MSG_STOP = "STOP";
-    public static final String MSG_NEXT = "NEXT";
-    public static final String MSG_PREV = "PREV";
-    @SuppressWarnings("unused")
-    public static final String MSG_EXIST = "EXIST";
-    private static final String MSG_SEND_MP3 = "SEND_MP3";
+    private final Object lock;
 
-    private Object lock;
-
-    private RetrieveFeedTask task;
     private ProgressDialog dialog;
+    private BackgroundTask backgroundTask;
 
     public Client(Object lock) {
         this.lock = lock;
@@ -45,18 +39,17 @@ public class Client {
      * @param path path to file
      */
     public synchronized void sendFile(String path) {
-        task = new RetrieveFeedTask(path);
-        task.setFile(true);
-        task.execute();
-    }
+        backgroundTask = new BackgroundTask(new MessageSendFile(path));
+        backgroundTask.execute();
+}
 
     /**
      * Send message
-     * @param path message content
+     * @param msg message content
      */
-    public synchronized void sendMessage(String path) {
-        task = new RetrieveFeedTask(path);
-        task.execute();
+    public synchronized void sendMessage(String msg) {
+        backgroundTask = new BackgroundTask(new MessagePlayerControl(msg));
+        backgroundTask.execute();
     }
 
     public void setDialog(ProgressDialog dialog) {
@@ -64,36 +57,62 @@ public class Client {
     }
 
     /**
-     * Async task
+     * Sending file ending
+     * @param processing processing or no
      */
-    private class RetrieveFeedTask extends AsyncTask<String, Void, Void> {
-
-        private String path;
-        private boolean file = false;
-
-        RetrieveFeedTask(String path) {
-            this.path = path;
+    private void setProcessing(boolean processing) {
+        if (!processing && dialog != null) {
+            dialog.dismiss();
         }
+    }
 
-        public void setFile(boolean file) {
-            this.file = file;
+    public void setSocketServerPORT(int socketServerPORT) {
+        SocketServerPORT = socketServerPORT;
+    }
+
+    public void setServerHost(String serverHost) {
+        ServerHost = serverHost;
+    }
+
+    private synchronized Exception getException() {
+        return exception;
+    }
+
+    private synchronized void setException(Exception exception) {
+        if (exception != null) {
+            synchronized (lock) {
+                lock.notify();
+            }
+        }
+        this.exception = exception;
+    }
+
+    public synchronized Object getLock() {
+        return lock;
+    }
+
+    private class BackgroundTask extends AsyncTask<String, Void, Void> {
+
+        private Message msg;
+
+        BackgroundTask(Message msg) {
+            this.msg = msg;
         }
 
         protected Void doInBackground(String... urls) {
             setException(null);
             setProcessing(true);
-            if (path == null) {
-                throw new IllegalArgumentException("Path can not be null");
-            }
-
             Socket sock;
             try {
+                if (msg == null) {
+                    throw new IllegalArgumentException("Message can not be null");
+                }
                 sock = new Socket(ServerHost, SocketServerPORT);
                 System.out.println("Connecting...");
 
-                if (file) {
+                if (msg.getMessageType() == MessageType.SEND_FILE) {
                     sendFile(sock);
-                } else {
+                } else if (msg.getMessageType() == MessageType.PLAYER_CONTROL){
                     sendMsg(sock);
                 }
 
@@ -107,6 +126,7 @@ public class Client {
 
         /**
          * Sending file
+         *
          * @param sock socket
          */
         @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -116,27 +136,38 @@ public class Client {
             ObjectOutputStream objectOutputStream = null;
             ObjectInputStream ois = null;
             OutputStream os = null;
+            MessageSendFile msf = (MessageSendFile) msg;
             try {
-                sock.setSoTimeout(30 * 1000);
-                File myFile = new File(path);
+//                sock.setSoTimeout(30 * 1000);
+                File myFile = new File(msf.getFileName());
                 byte[] myByteArray = new byte[(int) myFile.length()];
                 fis = new FileInputStream(myFile);
                 bis = new BufferedInputStream(fis);
                 bis.read(myByteArray, 0, myByteArray.length);
 
-                System.out.println("Sending..." + path);
+                System.out.println("Sending..." + msf.getFileName());
                 os = sock.getOutputStream();
                 objectOutputStream = new ObjectOutputStream(os);
-                objectOutputStream.writeUTF(path);
+                objectOutputStream.writeObject(msf);
                 objectOutputStream.flush();
 
                 ois = new ObjectInputStream(sock.getInputStream());
-                String msg = ois.readUTF();
-
-                if (msg.equals(MSG + MSG_SEND_MP3)) {
-                    os.write(myByteArray, 0, myByteArray.length);
-                    os.flush();
+                Object tmp = ois.readObject();
+                Message receivedMsg = null;
+                if (tmp instanceof Message) {
+                    receivedMsg = (Message) tmp;
+                } else {
+                    System.out.println("Unknown response");
                 }
+
+                if (receivedMsg != null && receivedMsg.getMessageType() == MessageType.PLAYER_CONTROL) {
+                    MessagePlayerControl mpc = (MessagePlayerControl) receivedMsg;
+                    if (mpc.getMsg().equals(Messages.MSG_SEND_MP3)) {
+                        os.write(myByteArray, 0, myByteArray.length);
+                        os.flush();
+                    }
+                }
+
             } catch (Exception exc) {
                 setException(exc);
             } finally {
@@ -163,7 +194,7 @@ public class Client {
                 }
             }
             if (getException() == null) {
-                System.out.println(path + " completed");
+                System.out.println(msf.getFileName() + " completed");
             }
         }
 
@@ -173,10 +204,11 @@ public class Client {
          */
         private void sendMsg(Socket sock) {
             ObjectOutputStream objectOutputStream = null;
+            MessagePlayerControl msgPc = (MessagePlayerControl) msg;
             try {
                 OutputStream os = sock.getOutputStream();
                 objectOutputStream= new ObjectOutputStream(os);
-                objectOutputStream.writeUTF(MSG + path);
+                objectOutputStream.writeObject(msgPc);
                 objectOutputStream.flush();
             } catch (Exception exc) {
                 setException(exc);
@@ -191,39 +223,8 @@ public class Client {
                 }
             }
             if (getException() == null) {
-                System.out.println("Message sent:" + path);
+                System.out.println("Message sent:" + msgPc.getMsg());
             }
         }
-    }
-
-    /**
-     * Sending file ending
-     * @param processing processing or no
-     */
-    private void setProcessing(boolean processing) {
-        if (!processing && dialog != null) {
-            dialog.dismiss();
-        }
-    }
-
-    public void setSocketServerPORT(int socketServerPORT) {
-        SocketServerPORT = socketServerPORT;
-    }
-
-    public void setServerHost(String serverHost) {
-        ServerHost = serverHost;
-    }
-
-    public synchronized Exception getException() {
-        return exception;
-    }
-
-    public synchronized void setException(Exception exception) {
-        if (exception != null) {
-            synchronized (lock) {
-                lock.notify();
-            }
-        }
-        this.exception = exception;
     }
 }

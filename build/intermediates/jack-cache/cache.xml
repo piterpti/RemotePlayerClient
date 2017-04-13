@@ -20,12 +20,6 @@
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-fe16e060f54948dfc0dbe6aeb55394b89f1914e8.jar" />
     </item>
     <item
-        jar="/home/piter/Android/Sdk/platforms/android-25/optional/org.apache.http.legacy.jar"
-        revision="25.0.2"
-        sha1="5f0541a4298daa0590b22cfbde43f85e2a675545">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackRuntimeLibraries/debug/jars/8000/40/org.apache.http.legacy-d50beb106db34f0b9c5fa53a9a8cdd34accd3491.jar" />
-    </item>
-    <item
         jar="/home/piter/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
         revision="25.0.2"
         sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
@@ -68,16 +62,16 @@
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-de8f43fc269eda442f798f51c6274e5284d17e8d.jar" />
     </item>
     <item
+        jar="/home/piter/AndroidStudioProjects/RemotePlayerClient/libs/PlayerMsg.jar"
+        revision="25.0.2"
+        sha1="aa84596be2e6fe72a9dc53cd6e6d8d82f6f51e2b">
+        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/PlayerMsg-0182ce56855062e1c841bd1948be51f45466bdcb.jar" />
+    </item>
+    <item
         jar="/home/piter/.android/build-cache/a399d5c1c21863c02b9c01b9bb62fdcca28ee31d/output/jars/classes.jar"
         revision="25.0.2"
         sha1="150252b33b00274cc868578ade018fda0d43a3eb">
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/classes-230df988d82dcb09c4a8c5b7fa42aeabc262efec.jar" />
-    </item>
-    <item
-        jar="/home/piter/Android/Sdk/platforms/android-25/android.jar"
-        revision="25.0.2"
-        sha1="712a0312fe844a21a1b3812fa960c363a1578984">
-        <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackRuntimeLibraries/debug/jars/8000/40/android-449c1746469f926b5589dfa2a251a58f5611bb07.jar" />
     </item>
     <item
         jar="/home/piter/Android/Sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
