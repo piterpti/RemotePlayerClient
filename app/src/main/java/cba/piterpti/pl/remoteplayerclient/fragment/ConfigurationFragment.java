@@ -47,9 +47,7 @@ public class ConfigurationFragment extends Fragment {
 
         getConfig();
 
-        backBtn.setOnClickListener(v -> {
-            backToPlayer();
-        });
+        backBtn.setOnClickListener(v -> backToPlayer());
 
         saveBtn.setOnClickListener(v -> {
             String port = portConfig.getText() + "";
@@ -63,7 +61,7 @@ public class ConfigurationFragment extends Fragment {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PORT, port);
         editor.putString(IP_ADDRESS, host);
-        editor.commit();
+        editor.apply();
         backToPlayer();
     }
 

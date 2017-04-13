@@ -138,7 +138,7 @@ public class Client {
             OutputStream os = null;
             MessageSendFile msf = (MessageSendFile) msg;
             try {
-//                sock.setSoTimeout(30 * 1000);
+                sock.setSoTimeout(30 * 1000);
                 File myFile = new File(msf.getFileName());
                 byte[] myByteArray = new byte[(int) myFile.length()];
                 fis = new FileInputStream(myFile);
