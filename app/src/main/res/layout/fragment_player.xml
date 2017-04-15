@@ -72,6 +72,39 @@
 
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_weight="1"
+        android:background="#eee">
+
+        <Button
+            android:id="@+id/main_volumeMinus"
+            android:text="@string/volumeMinus"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000"
+            android:textColor="#aaa"
+            android:layout_margin="3dp"
+            android:textSize="40sp"/>
+
+        <Button
+            android:id="@+id/main_volumePlus"
+            android:text="@string/volumePlus"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#000"
+            android:textColor="#aaa"
+            android:layout_margin="3dp"
+            android:textSize="40sp"/>
+
+
+    </LinearLayout>
+
         <Button
             android:id="@+id/main_getFileBtn"
             android:text="@string/get_file"
@@ -92,7 +125,7 @@
         android:id="@+id/main_playlistView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"/>
+        android:layout_weight="2"/>
 
 
 </LinearLayout>

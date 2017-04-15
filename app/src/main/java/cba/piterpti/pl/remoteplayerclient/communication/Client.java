@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import pl.piterpti.message.FlowArgs;
 import pl.piterpti.message.Message;
 import pl.piterpti.message.MessagePlayerControl;
 import pl.piterpti.message.MessageSendFile;
@@ -49,6 +50,13 @@ public class Client {
      */
     public synchronized void sendMessage(String msg) {
         backgroundTask = new BackgroundTask(new MessagePlayerControl(msg));
+        backgroundTask.execute();
+    }
+
+    public synchronized void sendMessageWithArgs(String msg, FlowArgs args) {
+        MessagePlayerControl mpc = new MessagePlayerControl(msg);
+        mpc.setArgs(args);
+        backgroundTask = new BackgroundTask(mpc);
         backgroundTask.execute();
     }
 

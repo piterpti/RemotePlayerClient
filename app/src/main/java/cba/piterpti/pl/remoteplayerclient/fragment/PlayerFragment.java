@@ -24,6 +24,7 @@ import cba.piterpti.pl.remoteplayerclient.activity.MainActivity;
 import cba.piterpti.pl.remoteplayerclient.communication.Client;
 import cba.piterpti.pl.remoteplayerclient.communication.PlaylistListener;
 import cba.piterpti.pl.remoteplayerclient.component.Playlist;
+import pl.piterpti.message.FlowArgs;
 import pl.piterpti.message.Messages;
 
 import static android.app.Activity.RESULT_OK;
@@ -84,6 +85,8 @@ public class PlayerFragment extends Fragment {
         Button nextBtn = (Button) view.findViewById(R.id.main_next);
         Button prevBtn = (Button) view.findViewById(R.id.main_prev);
         Button configBtn = (Button) view.findViewById(R.id.main_config);
+        Button volumePlus    = (Button) view.findViewById(R.id.main_volumePlus);
+        Button volumeMinus = (Button) view.findViewById(R.id.main_volumeMinus);
 
         playlistView = (Playlist) view.findViewById(R.id.main_playlistView);
 
@@ -101,6 +104,8 @@ public class PlayerFragment extends Fragment {
         pauseBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_PAUSE));
         nextBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_NEXT));
         prevBtn.setOnClickListener(v -> client.sendMessage(Messages.MSG_PREV));
+        volumePlus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", 10)));
+        volumeMinus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", -10)));
         configBtn.setOnClickListener(v -> goToConfiguration());
     }
 

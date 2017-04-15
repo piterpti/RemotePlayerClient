@@ -12,4 +12,6 @@
     <string name="get_file">Send file</string>
     <string name="configuration">Configuration</string>
     <string name="chooseFile">Choose file first</string>
+    <string name="volumePlus">+</string>
+    <string name="volumeMinus">-</string>
 </resources>
