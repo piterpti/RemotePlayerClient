@@ -64,7 +64,7 @@
     <item
         jar="/home/piter/AndroidStudioProjects/RemotePlayerClient/libs/PlayerMsg.jar"
         revision="25.0.2"
-        sha1="9838f2e587859fe174bff724404e97650d4fe6a5">
+        sha1="a49d40147e6bfad4e2978a7e54e805b5270529e2">
         <dex dex="/home/piter/AndroidStudioProjects/RemotePlayerClient/app/build/intermediates/transforms/preJackPackagedLibraries/debug/jars/8000/1f/PlayerMsg-0182ce56855062e1c841bd1948be51f45466bdcb.jar" />
     </item>
     <item

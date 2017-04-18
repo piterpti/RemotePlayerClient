@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import cba.piterpti.pl.remoteplayerclient.component.Playlist;
+import cba.piterpti.pl.remoteplayerclient.fragment.PlayerFragment;
 import pl.piterpti.message.Message;
 import pl.piterpti.message.MessagePlaylist;
 import pl.piterpti.message.MessageType;
@@ -20,8 +21,10 @@ public class PlaylistListener implements Runnable {
     private final int PORT = 8889;
     private boolean appClosing;
     private Playlist playlist;
+    private PlayerFragment fragment;
 
-    public PlaylistListener(Playlist playlist) {
+    public PlaylistListener(Playlist playlist, PlayerFragment fragment) {
+        this.fragment = fragment;
         this.playlist = playlist;
         try {
             serverSocket = new ServerSocket(PORT);
@@ -45,7 +48,7 @@ public class PlaylistListener implements Runnable {
 
                     if (((Message)objTmp).getMessageType() == MessageType.PLAYLIST) {
                         MessagePlaylist mpl = (MessagePlaylist) objTmp;
-                        playlist.setPlaylist(mpl.getPlaylist());
+                        fragment.updatePlaylist(mpl);
                     } else {
                         System.out.println("Unhandled message type: " +
                                 ((Message)objTmp).getMessageType().toString());
@@ -57,6 +60,11 @@ public class PlaylistListener implements Runnable {
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
 
         }

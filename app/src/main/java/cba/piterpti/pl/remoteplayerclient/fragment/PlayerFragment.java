@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ import cba.piterpti.pl.remoteplayerclient.communication.Client;
 import cba.piterpti.pl.remoteplayerclient.communication.PlaylistListener;
 import cba.piterpti.pl.remoteplayerclient.component.Playlist;
 import pl.piterpti.message.FlowArgs;
+import pl.piterpti.message.MessagePlayerControl;
+import pl.piterpti.message.MessagePlaylist;
 import pl.piterpti.message.Messages;
 
 import static android.app.Activity.RESULT_OK;
@@ -54,7 +57,7 @@ public class PlayerFragment extends Fragment {
         exceptionLock = client.getLock();
         init(view);
 
-        Thread playlistListener = new Thread(new PlaylistListener(playlistView));
+        Thread playlistListener = new Thread(new PlaylistListener(playlistView, this));
         playlistListener.setDaemon(true);
         playlistListener.start();
 
@@ -85,7 +88,7 @@ public class PlayerFragment extends Fragment {
         Button nextBtn = (Button) view.findViewById(R.id.main_next);
         Button prevBtn = (Button) view.findViewById(R.id.main_prev);
         Button configBtn = (Button) view.findViewById(R.id.main_config);
-        Button volumePlus    = (Button) view.findViewById(R.id.main_volumePlus);
+        Button volumePlus = (Button) view.findViewById(R.id.main_volumePlus);
         Button volumeMinus = (Button) view.findViewById(R.id.main_volumeMinus);
 
         playlistView = (Playlist) view.findViewById(R.id.main_playlistView);
@@ -107,6 +110,8 @@ public class PlayerFragment extends Fragment {
         volumePlus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", 10)));
         volumeMinus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", -10)));
         configBtn.setOnClickListener(v -> goToConfiguration());
+        playlistView.setOnItemClickListener((parent, view1, position, id) ->
+                client.sendMessageWithArgs(Messages.MSG_CURRENT_SONG, new FlowArgs("playSongByName", playlistView.getItemAtPosition(position))));
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -147,6 +152,13 @@ public class PlayerFragment extends Fragment {
         System.out.println("Client config: port: " + port + ", host: " + ipAddress);
         client.setServerHost(ipAddress);
         client.setSocketServerPORT(Integer.valueOf(port));
+    }
+
+    public void updatePlaylist(MessagePlaylist mpl) {
+        getActivity().runOnUiThread(() -> {
+            playlistView.setPlaylist(mpl.getPlaylist());
+            playlistView.setSelection(mpl.getCurrent());
+        });
     }
 
     private class ErrorListener implements Runnable {
