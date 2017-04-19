@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -26,7 +26,6 @@ import cba.piterpti.pl.remoteplayerclient.communication.Client;
 import cba.piterpti.pl.remoteplayerclient.communication.PlaylistListener;
 import cba.piterpti.pl.remoteplayerclient.component.Playlist;
 import pl.piterpti.message.FlowArgs;
-import pl.piterpti.message.MessagePlayerControl;
 import pl.piterpti.message.MessagePlaylist;
 import pl.piterpti.message.Messages;
 
@@ -44,6 +43,9 @@ public class PlayerFragment extends Fragment {
 
     private Playlist playlistView;
 
+    private View lastTouchedView;
+    private PlaylistListener runnablePlaylistList;
+
     public PlayerFragment() {
 
     }
@@ -57,7 +59,8 @@ public class PlayerFragment extends Fragment {
         exceptionLock = client.getLock();
         init(view);
 
-        Thread playlistListener = new Thread(new PlaylistListener(playlistView, this));
+        runnablePlaylistList = new PlaylistListener(this);
+        Thread playlistListener = new Thread(runnablePlaylistList);
         playlistListener.setDaemon(true);
         playlistListener.start();
 
@@ -110,8 +113,16 @@ public class PlayerFragment extends Fragment {
         volumePlus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", 10)));
         volumeMinus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", -10)));
         configBtn.setOnClickListener(v -> goToConfiguration());
-        playlistView.setOnItemClickListener((parent, view1, position, id) ->
-                client.sendMessageWithArgs(Messages.MSG_CURRENT_SONG, new FlowArgs("playSongByName", playlistView.getItemAtPosition(position))));
+        playlistView.setOnItemClickListener((parent, view1, position, id) -> {
+            if (lastTouchedView != null) {
+                lastTouchedView.setBackgroundColor(Color.WHITE);
+            }
+            view1.setBackgroundColor(Color.CYAN);
+            lastTouchedView = view1;
+            client.sendMessageWithArgs(Messages.MSG_CURRENT_SONG, new FlowArgs("playSongByName", playlistView.getItemAtPosition(position)));
+        });
+
+        client.sendMessage(Messages.MSG_REFRESH_PLAYLIST);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -121,7 +132,7 @@ public class PlayerFragment extends Fragment {
         if(requestCode == ACTIVITY_CHOOSE_FILE) {
             Uri uri = data.getData();
             String filePath = getRealPathFromURI(uri);
-            if (!filePath.isEmpty() && new File(filePath).exists()) {
+            if (filePath != null && !filePath.isEmpty() && new File(filePath).exists()) {
                 ProgressDialog pd = ProgressDialog.show(getActivity(), "Processing", "Sending mp3 file to your PC", true, false);
                 client.setDialog(pd);
                 client.sendFile(filePath);
@@ -139,6 +150,7 @@ public class PlayerFragment extends Fragment {
     }
 
     private void goToConfiguration() {
+        runnablePlaylistList.setStop(true);
         ConfigurationFragment configFragment = new ConfigurationFragment();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, configFragment, MainActivity.CONFIG_FRAGMENT);
@@ -156,10 +168,15 @@ public class PlayerFragment extends Fragment {
 
     public void updatePlaylist(MessagePlaylist mpl) {
         getActivity().runOnUiThread(() -> {
-            playlistView.setPlaylist(mpl.getPlaylist());
+            playlistView.setPlaylist(mpl.getPlaylist(), mpl.getCurrent());
             playlistView.setSelection(mpl.getCurrent());
+            if (lastTouchedView != null) {
+                lastTouchedView.setBackgroundColor(Color.CYAN);
+            }
         });
     }
+
+
 
     private class ErrorListener implements Runnable {
 

@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import cba.piterpti.pl.remoteplayerclient.component.Playlist;
 import cba.piterpti.pl.remoteplayerclient.fragment.PlayerFragment;
 import pl.piterpti.message.Message;
 import pl.piterpti.message.MessagePlaylist;
@@ -19,13 +18,11 @@ public class PlaylistListener implements Runnable {
 
     private ServerSocket serverSocket;
     private final int PORT = 8889;
-    private boolean appClosing;
-    private Playlist playlist;
+    private boolean stop;
     private PlayerFragment fragment;
 
-    public PlaylistListener(Playlist playlist, PlayerFragment fragment) {
+    public PlaylistListener(PlayerFragment fragment) {
         this.fragment = fragment;
-        this.playlist = playlist;
         try {
             serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
@@ -35,11 +32,13 @@ public class PlaylistListener implements Runnable {
 
     @Override
     public void run() {
-
-        Socket socket = null;
-        while (!appClosing) {
+        Socket socket;
+        while (!stop) {
             try {
                 socket = serverSocket.accept();
+                if (socket.isClosed()) {
+                    break;
+                }
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
                 Object objTmp = ois.readObject();
@@ -60,15 +59,8 @@ public class PlaylistListener implements Runnable {
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
             }
-
         }
-
 
         try {
             serverSocket.close();
@@ -77,7 +69,12 @@ public class PlaylistListener implements Runnable {
         }
     }
 
-    public void setAppClosing(boolean appClosing) {
-        this.appClosing = appClosing;
+    public void setStop(boolean stop) {
+        this.stop = stop;
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

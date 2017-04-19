@@ -5,7 +5,8 @@
     tools:context="cba.piterpti.pl.remoteplayerclient.fragment.ConfigurationFragment"
     android:orientation="vertical"
     android:background="#111"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:weightSum="6">
 
     <TextView
         android:text="Port:"
@@ -58,5 +59,14 @@
             android:layout_weight="1"/>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/config_exit"
+        android:text="Close player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:padding="15dp"/>
 
 </LinearLayout>

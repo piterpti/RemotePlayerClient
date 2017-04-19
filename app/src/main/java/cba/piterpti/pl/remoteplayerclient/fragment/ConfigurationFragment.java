@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import cba.piterpti.pl.remoteplayerclient.R;
 import cba.piterpti.pl.remoteplayerclient.activity.MainActivity;
+import pl.piterpti.message.Messages;
 
 import static cba.piterpti.pl.remoteplayerclient.fragment.PlayerFragment.IP_ADDRESS;
 import static cba.piterpti.pl.remoteplayerclient.fragment.PlayerFragment.PORT;
@@ -44,6 +45,7 @@ public class ConfigurationFragment extends Fragment {
         ipAddress = (EditText) view.findViewById(R.id.config_ipText);
         Button backBtn = (Button) view.findViewById(R.id.config_back);
         Button saveBtn = (Button) view.findViewById(R.id.config_save);
+        Button exitBtn = (Button) view.findViewById(R.id.config_exit);
 
         getConfig();
 
@@ -54,6 +56,13 @@ public class ConfigurationFragment extends Fragment {
             String host = ipAddress.getText() + "";
             saveConfig(port, host);
         });
+
+        exitBtn.setOnClickListener(v -> exitApp());
+    }
+
+    private void exitApp() {
+        MainActivity activity = (MainActivity) getActivity();
+        activity.getClient().sendMessage(Messages.MSG_CLOSE_APP);
     }
 
     private void saveConfig(String port, String host) {
@@ -65,7 +74,7 @@ public class ConfigurationFragment extends Fragment {
         backToPlayer();
     }
 
-    private void backToPlayer() {
+    public void backToPlayer() {
         PlayerFragment playerFragment = new PlayerFragment();
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, playerFragment, MainActivity.PLAYER_FRAGMENT);
