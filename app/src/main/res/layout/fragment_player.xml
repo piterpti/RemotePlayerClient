@@ -30,7 +30,6 @@
                 android:layout_weight="1"
                 android:background="#ff0004"/>
 
-
             <Button
                 android:id="@+id/main_play"
                 android:text="@string/play"
@@ -38,14 +37,13 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="#09b600"/>
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            android:weightSum="2"
+            android:weightSum="4"
             android:layout_weight="1"
             android:background="#eee">
 
@@ -59,6 +57,25 @@
                 android:textColor="#aaa"
                 android:layout_margin="3dp"/>
 
+            <Button
+                android:id="@+id/main_backward"
+                android:text="@string/backward"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000"
+                android:textColor="#aaa"
+                android:layout_margin="3dp"/>
+
+            <Button
+                android:id="@+id/main_forward"
+                android:text="@string/forward"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000"
+                android:textColor="#aaa"
+                android:layout_margin="3dp"/>
 
             <Button
                 android:id="@+id/main_next"
@@ -69,7 +86,6 @@
                 android:background="#000"
                 android:textColor="#aaa"
                 android:layout_margin="3dp"/>
-
         </LinearLayout>
 
     <LinearLayout

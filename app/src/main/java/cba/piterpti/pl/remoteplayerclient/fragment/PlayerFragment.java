@@ -93,6 +93,8 @@ public class PlayerFragment extends Fragment {
         Button configBtn = (Button) view.findViewById(R.id.main_config);
         Button volumePlus = (Button) view.findViewById(R.id.main_volumePlus);
         Button volumeMinus = (Button) view.findViewById(R.id.main_volumeMinus);
+        Button forward = (Button) view.findViewById(R.id.main_forward);
+        Button backward = (Button) view.findViewById(R.id.main_backward);
 
         playlistView = (Playlist) view.findViewById(R.id.main_playlistView);
 
@@ -113,6 +115,8 @@ public class PlayerFragment extends Fragment {
         volumePlus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", 10)));
         volumeMinus.setOnClickListener(v -> client.sendMessageWithArgs(Messages.MSG_SET_VOLUME, new FlowArgs("volume", -10)));
         configBtn.setOnClickListener(v -> goToConfiguration());
+        forward.setOnClickListener(v -> client.sendMessage(Messages.MSG_REV_FORWARD));
+        backward.setOnClickListener(v -> client.sendMessage(Messages.MSG_REV_BACKWARD));
         playlistView.setOnItemClickListener((parent, view1, position, id) -> {
             if (lastTouchedView != null) {
                 lastTouchedView.setBackgroundColor(Color.WHITE);
